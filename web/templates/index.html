@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/master.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/chat.js') }}" charset="utf-8"></script>
+
+    <title>Museum Chat</title>
+  </head>
+  <body>
+    <div class="container">
+      <div class="paint">
+        <div class="bboxes">
+          <div id="lazo" class="lazo hide">
+            <div class="vertex"></div>
+            <div class="vertex"></div>
+            <div class="vertex"></div>
+            <div class="vertex"></div>
+          </div>
+        </div>
+        <img src="{{ url_for('static', filename='img/Botticelli-primavera.jpg') }}" alt="">
+      </div>
+      <div class="chat">
+        <div class="body">
+          <!-- hide messages -->
+          <div class="msg from hide">
+            <img src="{{ url_for('static', filename='img/robot-icon.png') }}" alt="">
+            <div class="text">
+              <p></p>
+            </div>
+          </div>
+
+          <div class="msg to hide">
+            <img src="{{ url_for('static', filename='img/user-icon.png') }}" alt="">
+            <div class="text">
+              <p></p>
+            </div>
+          </div>
+
+          <!-- display messages -->
+          <div class="msg from">
+            <img src="{{ url_for('static', filename='img/robot-icon.png') }}" alt="">
+            <div class="text">
+              <p>Welcome! Write the title of an artwork that you want to explore 🌎!</p>
+            </div>
+          </div>
+
+          <div id="typing-msg" class="msg from hide">
+            <img src="{{ url_for('static', filename='img/robot-icon.png') }}" alt="">
+            <div class="text">
+              <div class="typing">
+                <div class="dot"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="input">
+          <textarea name="name" id="inputtext" rows="1" placeholder="Scrivi il titolo di un quadro..."></textarea>
+          <div class="btn" id="pointerbtn">
+            <img src="{{ url_for('static', filename='img/crop-icon.png') }}" alt="Select a point on the picture">
+          </div>
+          <div class="send-btn" id="sendbtn">
+            <img src="{{ url_for('static', filename='img/send-icon.png') }}" alt="Send">
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
