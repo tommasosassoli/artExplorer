@@ -1,5 +1,5 @@
 from unittest import TestCase
-from art.data import DataFacade
+from art.data import DataFacade, request_chat_gpt_description
 
 
 class TestDatasetReader(TestCase):
@@ -28,3 +28,9 @@ class TestDatasetReader(TestCase):
             a = self.data.get_artwork(p)
             if a is not None:
                 self.fail()
+
+    def test_request_chat_gpt_description(self):
+        res = request_chat_gpt_description('Birth of Venus')
+        print(res)
+        if res is None:
+            self.fail()
