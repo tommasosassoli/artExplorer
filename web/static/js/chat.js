@@ -131,7 +131,7 @@ function splitDescription(analysis) {
         'style="background-color: ' + color + ';" ' +
         'data-index="' + index + '" ' +
         'data-key-color="' + val + '">' +
-        desc.substring(start, stop) + '</span>'
+        desc.substring(start, stop + 1) + '</span>'
   })
   return html_desc
 }
