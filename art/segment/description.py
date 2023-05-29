@@ -39,15 +39,3 @@ class DotSegmentizer(AbstractDescriptionSegmentizer):
         # text heuristic
         descriptions = self.description.split('.')
         return description_segment_encoding(descriptions)
-
-
-class CommaSegmentizer(AbstractDescriptionSegmentizer):
-    def make_segments(self):
-        # text heuristic
-        descriptions = self.description.split(',')
-        return description_segment_encoding(descriptions)
-
-
-class ChatGptSegmentizer(AbstractDescriptionSegmentizer):
-    def make_segments(self):  # TODO implement
-        pass

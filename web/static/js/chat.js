@@ -7,28 +7,21 @@ var bboxColors = {}
 
 function sendMsg(msg) {
   if (msg) {
-    let html = $(".msg.to.hide").clone();
-    html.removeClass('hide');
-    html.find('p').text(msg);
-    html.insertBefore("#typing-msg");
-
     $("#inputtext").val('');
-    $('#typing-msg').removeClass('hide');
-    $(".chat .body").animate({ scrollTop: $('.chat .body').prop("scrollHeight")}, 300);
+    $('#art-desc').addClass('hide').html('');
+    $('#notfound-popup').addClass('hide');
+    $('#idle-popup').removeClass('hide').find('.loading').removeClass('hide');
   }
 }
 
-function receiveMsg(msg, borderColor = null) {
+function receiveMsg(msg) {
   if (msg) {
-    let html = $(".msg.from.hide:first").clone();
-    html.removeClass('hide');
-    html.find('p').text(msg);
-    if (borderColor != null)
-      html.find('.text').attr('style', `border-color: #${borderColor};`)
-    html.insertBefore("#typing-msg");
-
-    $('#typing-msg').addClass('hide');
-    $(".chat .body").animate({ scrollTop: $('.chat .body').prop("scrollHeight")}, 300);
+    $('#idle-popup').addClass('hide').find('.loading').addClass('hide');
+    $('#notfound-popup').addClass('hide');
+    $('#art-desc').removeClass('hide').html(msg);
+  } else {
+    $('#idle-popup').addClass('hide').find('.loading').addClass('hide');
+    $('#notfound-popup').removeClass('hide');
   }
 }
 
@@ -73,14 +66,16 @@ function printBbox(bbox, index) {
       bboxColors[keyColor] = color
     }
     let color = bboxColors[keyColor]
-    style += `border-color: #${color}`
+    style += `border-color: #${color}; opacity: 0.3;`
 
     // clone and set property
     let lazo = $(".lazo:first").clone();
     lazo.removeClass('hide');
     lazo.attr('style', style)
     lazo.attr('data-index', index)
-    lazo.on('click', bboxClickEvent)
+    lazo.attr('data-key-color', keyColor)
+    lazo.hover(bboxHoverInEvent, bboxHoverOutEvent)
+    //lazo.on('mouseenter', bboxHoverInEvent)
 
     $('.bboxes').append(lazo)
   }
@@ -97,7 +92,6 @@ function setBboxZIndex() {
     area.push(a)
   })
   area.sort((first, second) => second.area - first.area)
-  console.log(area)
 
   // z ordering
   const offset = 3  // z-index starting offset
@@ -115,6 +109,31 @@ function printAnalysis(img) {
   paintScaledFactor = getScaledFactor(img)
   analysis.segments.forEach((item, index) => printBbox(item.bbox, index))
   setBboxZIndex()
+}
+
+/* description and text */
+
+function splitDescription(analysis) {
+  let desc = analysis.desc
+  let text_pos = analysis.segments.map(function(s) {
+    return getKeyColor(s.start_end_pos)
+  })
+  text_pos = [...new Set(text_pos)].sort()
+
+  let html_desc = ''
+  text_pos.forEach((val, index) => {
+    let spl = val.split('-')
+    let start = parseInt(spl[0])
+    let stop = parseInt(spl[1])
+    let color = '#' + bboxColors[val] + '30' // last value is for background opacity
+
+    html_desc += '<span class="highlight" ' +
+        'style="background-color: ' + color + ';" ' +
+        'data-index="' + index + '" ' +
+        'data-key-color="' + val + '">' +
+        desc.substring(start, stop + 1) + '</span>'
+  })
+  return html_desc
 }
 
 /* ajax calls */
@@ -137,11 +156,14 @@ function makeAnalysis(title) {
       $('.chat .msg.from').find('.text').removeAttr('style')
 
       printAnalysis(img)
-      receiveMsg("This is what I found. Click on a box to find out all the details.")
+      let descHtml = splitDescription(analysis)
+      receiveMsg(descHtml)
+      // set event
+      $('.highlight').hover(bboxHoverInEvent, bboxHoverOutEvent)
     },
     statusCode: {
     404: function() {
-        receiveMsg("Sorry, I didn't find anything..☹️ Try again. ")
+        receiveMsg(null)
       }
     }
   })
@@ -149,15 +171,24 @@ function makeAnalysis(title) {
 
 /* DOM events */
 
-function bboxClickEvent() {
-  let index = $(this).attr('data-index')
-  let start_end_pos = analysis.segments[index].start_end_pos
-  let text = analysis.desc.substring(start_end_pos.start, start_end_pos.end)
+function bboxHoverInEvent() {
+  let keyColor = $(this).attr('data-key-color')
+  bboxHoverEvent(keyColor, '80')
+}
 
-  let keyColor = getKeyColor(start_end_pos)
-  let color = bboxColors[keyColor]
+function bboxHoverOutEvent() {
+  let keyColor = $(this).attr('data-key-color')
+  bboxHoverEvent(keyColor, '30')
+}
 
-  receiveMsg(text, color)
+function bboxHoverEvent(keyColor, opacity) {
+  let span = $('.highlight[data-key-color="' + keyColor + '"]')[0]
+  let color  = '#' + bboxColors[keyColor];
+  color += opacity
+  $(span).css('backgroundColor', color)
+
+  let lazo = $('.lazo[data-key-color="' + keyColor + '"]')
+  lazo.css('opacity', opacity / 100)
 }
 
 function sendBtnClick() {
@@ -166,27 +197,9 @@ function sendBtnClick() {
   makeAnalysis(title)
 }
 
-function pointerBtnClick() {
-  // clear older bbox
-  $('.bboxes .lazo').not('.hide').remove()
-
-  // TODO take point on image and send to server
-
-  // get image
-  let img = $('.paint img')
-  img = img[0]
-
-  // print analysis
-  printAnalysis(img)
-}
-
 $(document).ready(function() {
   $("#sendbtn").click(function (){
     sendBtnClick();
-  });
-
-  $("#pointerbtn").click(function (){
-    pointerBtnClick();
   });
 
   $("#inputtext").keypress(function (e) {
@@ -198,7 +211,6 @@ $(document).ready(function() {
   });
 
   $(window).on( "resize", function() {
-    console.log('RESIZE')
     // clear older bbox
     $('.bboxes .lazo').not('.hide').remove()
 
