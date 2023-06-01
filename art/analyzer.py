@@ -1,5 +1,10 @@
 from .segmentizer import ImageSegmentizer, DescriptionSegmentizer
+from .model_utils.clip import model, preprocess, tokenizer, device
+from .model_utils.grad_cam import resize_image, gradCAM, get_hot_coord
+from .model_utils.sam import predictor as sam_predictor, get_bbox_from_mask
 import torch
+import numpy as np
+import cv2
 
 
 class ArtworkAnalyzer:
@@ -17,24 +22,45 @@ class ArtworkAnalyzer:
         if not self.artwork.has_segment():
             self.elaborate_segment()
 
-        with torch.no_grad():
-            image_segments = self.artwork.get_artwork_image()
-            image_segments_encoded = image_segments.get_segment_encoded()
+        pil_image = self.artwork.get_artwork_image().get_image()
+        description_segments = self.artwork.get_artwork_description().segments
+        assoc = []
 
-            description_segments = self.artwork.get_artwork_description()
-            description_segments_encoded = description_segments.get_segment_encoded()
+        # GradCAM
+        input_image = preprocess(pil_image).unsqueeze(0).to(device)
+        image_np = resize_image(pil_image, 224)
 
-            assoc = []
-            for img_index, image_seg in enumerate(image_segments_encoded):
-                dist = (100.0 * image_seg @ description_segments_encoded.T)
-                probs = dist.softmax(dim=-1).cpu().topk(1, dim=-1)
+        # Segment Anything
+        cv_image = cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
+        sam_predictor.set_image(cv_image)
 
-                desc_index = probs.indices.numpy()[0][0]  # index of the most probably description
-                bbox = image_segments.segments[img_index].bbox.tolist()
-                start_end_pos = description_segments.segments[desc_index].start_end_pos
+        for desc_index, caption in enumerate(description_segments):
+            text_input = tokenizer([caption.description_encoded]).to(device)
 
-                assoc.append((bbox, start_end_pos))
-            return assoc
+            attn_map = gradCAM(
+                model.visual,
+                input_image,
+                model.encode_text(text_input).float(),
+                getattr(model.visual, "layer4")
+            )
+            attn_map = attn_map.squeeze().detach().cpu().numpy()
+            coord = get_hot_coord(pil_image, image_np, attn_map)
+
+            input_point = np.array([coord])
+            input_label = np.array([1])
+
+            masks, scores, logits = sam_predictor.predict(
+                point_coords=input_point,
+                point_labels=input_label,
+                multimask_output=False,
+            )
+
+            bbox = get_bbox_from_mask(masks[0])
+            bbox = np.array(bbox).tolist()      # convert all np.int64 to int Python scalar
+            start_end_pos = description_segments[desc_index].start_end_pos
+
+            assoc.append((bbox, start_end_pos))
+        return assoc
 
     def analyze_coordinates(self, x, y):
         # TODO elaborate segment, then CLIP

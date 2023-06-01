@@ -21,6 +21,7 @@ def analyze_artwork(title):
         analyzer = ArtworkAnalyzer(artwork)
 
         segments = analyzer.analyze()
+        print(segments)
         seg_parse = parse_segments(segments)
         url = artwork.get_artwork_image().get_url()
         desc = artwork.get_artwork_description().get_description()

@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from art.segment.description import DotSegmentizer, CommaSegmentizer
-from art.segment.image import BingSegmentizer, FastRcnnSegmentizer, SamSegmentizer
+from art.segment.description import DotSegmentizer
+from art.segment.image import FullImageSegmentizer
 
 
 class Segmentizer(ABC):
@@ -15,18 +15,15 @@ class ImageSegmentizer(Segmentizer):
 
     def elaborate(self):
         flat_img = self.artworkImage.get_image()
-
-        bing = BingSegmentizer(flat_img)
-        frcnn = FastRcnnSegmentizer(flat_img)
-
-        self.artworkImage.add_segment(bing.make_segments())
-        self.artworkImage.add_segment(frcnn.make_segments())
+        full = FullImageSegmentizer(flat_img)
+        self.artworkImage.add_segment(full.make_segments())
 
     def elaborate_coordinates(self, x, y):
-        flat_img = self.artworkImage.get_image()
-
-        sam = SamSegmentizer(flat_img)
-        self.artworkImage.add_segment(sam.make_segments())
+        # flat_img = self.artworkImage.get_image()
+        #
+        # sam = SamSegmentizer(flat_img)
+        # self.artworkImage.add_segment(sam.make_segments())
+        pass
 
 
 class DescriptionSegmentizer(Segmentizer):
