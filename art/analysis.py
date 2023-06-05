@@ -92,7 +92,7 @@ class Analyzer:
         pil_image = pil_reader.read()
         desc = gpt_reader.send()
 
-        self.artwork.set_description(desc)  # TODO check if artwork to be return
+        self.artwork.set_description(desc)
 
         # analyze artwork task
         sam = SAM(pil_image)
