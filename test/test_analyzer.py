@@ -1,6 +1,6 @@
 from unittest import TestCase
-from art.data import DataFacade
-from art.analyzer import ArtworkAnalyzer
+from art.analysis import Analyzer
+from art.data import PILReader, lookup_artwork
 from PIL import ImageDraw
 
 
@@ -13,12 +13,10 @@ def show_analysis(img, bboxes):
 
 class TestArtworkAnalyzer(TestCase):
     def test_analyze(self):
-        data = DataFacade()
-        artwork = data.get_artwork({'title': 'Wanderer above the Sea of Fog'})
-
-        analyzer = ArtworkAnalyzer(artwork)
+        art = lookup_artwork('Wanderer above the Sea of Fog')
+        analyzer = Analyzer(art)
         analysis = analyzer.analyze()
 
-        pil_img = artwork.get_artwork_image().get_image().copy()
-        bboxes = [a[0] for a in analysis]
+        pil_img = PILReader(art.get_url()).read()
+        bboxes = [a.bbox for a in analysis]
         show_analysis(pil_img, bboxes)
