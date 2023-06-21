@@ -1,4 +1,4 @@
-from art.analysis import Artwork
+from art.artwork import Artwork
 from definitions import DATASET_PATH
 import pandas as pd
 from PIL import Image
@@ -24,6 +24,22 @@ def lookup_artwork(title) -> Artwork or None:
         desc = '\n'.join(sentences)
         return Artwork(title, desc, url)
     return None
+
+
+def get_artwork_list() -> list[Artwork]:
+    if dataframe is None:
+        read_dataset(DATASET_PATH)
+
+    list_artwork = []
+    for index, row in dataframe.iterrows():
+        title = row['title']
+        url = row['img_url']
+        year = row['year']
+        sentences = row['visual_sentences']
+        desc = '\n'.join(sentences)
+        list_artwork.append(Artwork(title, desc, url, year))
+
+    return list_artwork
 
 
 class PILReader:

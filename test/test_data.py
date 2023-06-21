@@ -1,5 +1,5 @@
 from unittest import TestCase
-from art.data import lookup_artwork, GPTApi, PILReader
+from art.data import lookup_artwork, GPTApi, PILReader, get_artwork_list
 
 
 class TestDatasetReader(TestCase):
@@ -39,4 +39,9 @@ class TestDatasetReader(TestCase):
         pil = PILReader(url)
         img = pil.read()
         if img is None:
+            self.fail()
+
+    def test_get_titles(self):
+        t = get_artwork_list()
+        if t is None or len(t) == 0:
             self.fail()
