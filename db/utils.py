@@ -36,7 +36,7 @@ def insert(artwork: Artwork, assoc_list: list[Association]):
     close_connection()
 
 
-def select(artwork: Artwork) -> list[Association]:
+def select(artwork: Artwork) -> list[Association] or None:
     con, cur = get_connection_and_cursor()
 
     # Artwork
@@ -47,20 +47,22 @@ def select(artwork: Artwork) -> list[Association]:
     """, [artwork.get_artpedia_id()])
 
     obj = res.fetchone()
-    artwork.set_description(obj[0])
+    if obj is not None:
+        artwork.set_description(obj[0])
 
-    res = cur.execute("""
-        SELECT startX, startY, endX, endY, startCh, endCh
-        FROM Association
-        WHERE artworkId == ?
-    """, [artwork.get_artpedia_id()])
+        res = cur.execute("""
+            SELECT startX, startY, endX, endY, startCh, endCh
+            FROM Association
+            WHERE artworkId == ?
+        """, [artwork.get_artpedia_id()])
 
-    assoc_list = []
-    for row in res:
-        bbox = list(row[0:4])
-        tbox = list(row[4:6])
-        assoc_list.append(Association(bbox, tbox))
+        assoc_list = []
+        for row in res:
+            bbox = list(row[0:4])
+            tbox = list(row[4:6])
+            assoc_list.append(Association(bbox, tbox))
 
-    close_connection()
-    return assoc_list
+        close_connection()
+        return assoc_list
+    return None
 
