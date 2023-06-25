@@ -28,6 +28,19 @@ def lookup_artwork(title) -> Artwork or None:
     return None
 
 
+def lookup_artwork_by_id(artpedia_id):
+    if dataframe is None:
+        read_dataset(DATASET_PATH)
+
+    if artpedia_id in dataframe.index:
+        obj = dataframe.loc[artpedia_id]
+        title = obj['title']
+        url = obj['img_url']
+        year = obj['year']
+        return Artwork(title, None, url, year, artpedia_id)
+    return None
+
+
 def get_artwork_list() -> list[Artwork]:
     if dataframe is None:
         read_dataset(DATASET_PATH)

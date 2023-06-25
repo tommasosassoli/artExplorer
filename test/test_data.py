@@ -1,5 +1,5 @@
 from unittest import TestCase
-from art.data import lookup_artwork, GPTApi, PILReader, get_artwork_list
+from art.data import lookup_artwork, lookup_artwork_by_id, GPTApi, PILReader, get_artwork_list
 
 
 class TestDatasetReader(TestCase):
@@ -22,6 +22,18 @@ class TestDatasetReader(TestCase):
             a = lookup_artwork(t)
             if a is not None:
                 self.fail()
+
+    def test_artpedia_by_id(self):
+        id = 2
+        art = lookup_artwork_by_id(id)
+        if art is None:
+            self.fail()
+
+    def test_artpedia_by_id_not_exist(self):
+        id = 20
+        art = lookup_artwork_by_id(id)
+        if art is not None:
+            self.fail()
 
     def test_gpt_api(self):
         title, _, desc = lookup_artwork("Wanderer above the Sea of Fog")
