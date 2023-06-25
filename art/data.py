@@ -20,9 +20,11 @@ def lookup_artwork(title) -> Artwork or None:
     if not obj.empty:
         title = obj['title'].iloc[0]
         url = obj['img_url'].iloc[0]
+        year = obj['year'].iloc[0]
         sentences = obj['visual_sentences'].iloc[0]
         desc = '\n'.join(sentences)
-        return Artwork(title, desc, url)
+        index = int(obj.index[0])
+        return Artwork(title, desc, url, year, index)
     return None
 
 
@@ -37,7 +39,7 @@ def get_artwork_list() -> list[Artwork]:
         year = row['year']
         sentences = row['visual_sentences']
         desc = '\n'.join(sentences)
-        list_artwork.append(Artwork(title, desc, url, year))
+        list_artwork.append(Artwork(title, desc, url, year, index))
 
     return list_artwork
 

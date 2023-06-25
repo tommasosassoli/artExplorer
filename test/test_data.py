@@ -10,10 +10,8 @@ class TestDatasetReader(TestCase):
                   'Fiesole Altarpiece']
 
         for t in titles:
-            a, b, c = lookup_artwork(t)
-            if a is None \
-                    or b is None\
-                    or c is None:
+            a = lookup_artwork(t)
+            if a is None:
                 self.fail()
 
     def test_artpedia_not_exist_artwork(self):
@@ -21,10 +19,8 @@ class TestDatasetReader(TestCase):
                   'Not Exist']
 
         for t in titles:
-            a, b, c = lookup_artwork(t)
-            if a is not None \
-                    or b is not None\
-                    or c is not None:
+            a = lookup_artwork(t)
+            if a is not None:
                 self.fail()
 
     def test_gpt_api(self):

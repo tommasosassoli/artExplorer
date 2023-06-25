@@ -11,11 +11,12 @@ class Artwork:
         year: the year of the artwork
     """
 
-    def __init__(self, title: str, description: str, url: str, year: int = None):
+    def __init__(self, title: str, description: str, url: str, year: int = None, artpedia_id: int = None):
         self.title = title
         self.description = description
         self.url = url
         self.year = year
+        self.artpedia_id = artpedia_id
 
     def get_title(self):
         return self.title
@@ -32,6 +33,9 @@ class Artwork:
 
     def get_year(self):
         return self.year
+
+    def get_artpedia_id(self):
+        return self.artpedia_id
 
 
 class Association:
