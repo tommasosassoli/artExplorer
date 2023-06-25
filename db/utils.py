@@ -13,6 +13,13 @@ def get_connection_and_cursor():
     return connection, connection.cursor()
 
 
+def close_connection():
+    global connection
+    if connection is not None:
+        connection.close()
+        connection = None
+
+
 def insert(artwork: Artwork, assoc_list: list[Association]):
     con, cur = get_connection_and_cursor()
 
@@ -26,6 +33,7 @@ def insert(artwork: Artwork, assoc_list: list[Association]):
 
     cur.executemany("INSERT INTO Association VALUES(?, ?, ?, ?, ?, ?, ?)", data)
     con.commit()
+    close_connection()
 
 
 def select(artwork: Artwork) -> list[Association]:
@@ -53,5 +61,6 @@ def select(artwork: Artwork) -> list[Association]:
         tbox = list(row[4:6])
         assoc_list.append(Association(bbox, tbox))
 
+    close_connection()
     return assoc_list
 
