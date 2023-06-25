@@ -1,18 +1,24 @@
 from flask import Flask, render_template, abort, jsonify
 from art.analysis import Analyzer
-from art.data import lookup_artwork
-import os
+from art.data import lookup_artwork, get_artwork_list
 
 app = Flask(__name__)
 
 
 @app.route("/")
-def hello_world():
-    return render_template('index.html')
+def index():
+    artworks = get_artwork_list()
+    artworks = artworks[0:10]
+    return render_template('index.html', artworks=artworks)
 
 
 @app.route("/<title>")
-def analyze_artwork(title):
+def analysis(title):
+    return render_template('analysis.html', title=title)
+
+
+@app.route("/api/analysis/<title>")
+def api_analysis(title):
     artwork = lookup_artwork(title)
     if artwork is not None:
         analyzer = Analyzer(artwork)
@@ -26,7 +32,7 @@ def analyze_artwork(title):
                    'segments': seg_parse}
         return jsonify(results)
     else:
-        return abort(404)
+        return abort(500)
 
 
 def parse_segments(segments):
@@ -37,7 +43,7 @@ def parse_segments(segments):
             'startY': segments[i].bbox[1],
             'endX': segments[i].bbox[2],
             'endY': segments[i].bbox[3],
-            },
+        },
             'start_end_pos': {
                 'start': segments[i].tbox[0],
                 'end': segments[i].tbox[1]
