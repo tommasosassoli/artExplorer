@@ -22,6 +22,23 @@ header .subtitle {
     color: rgb(106, 106, 106);
 }
 
+/* serach bar */
+
+.search-bar {
+    width: 40%;
+    display: flex;
+    align-items: center;
+    margin: 0.8rem auto;
+}
+
+.search-bar input {
+    width: 100%;
+    height: 30px;
+    text-align: center;
+    font-size: 0.9rem;
+    margin-right: 5px;
+}
+
 /* container */
 
 .container {
@@ -42,6 +59,10 @@ header .subtitle {
     position: relative;
     overflow: hidden;
     cursor: pointer;
+}
+
+.item.to-clone {
+    display: none;
 }
 
 .image {
