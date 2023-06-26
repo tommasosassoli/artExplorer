@@ -7,10 +7,10 @@ body {
 .container {
   width: 100%;
   max-height: 95vh;
-  display: flex;
+  /*display: flex;*/
+  display: none;  /* while loading artwork */
   flex-direction: row;
   margin: auto;
-  display: none;  /* while loading artwork */
 }
 
 .hide {
@@ -50,10 +50,6 @@ body {
 
 .lazo.hide {
   display: none;
-}
-
-.lazo:hover {
-  background: rgba(0, 188, 255, 0.20);
 }
 
 .lazo .vertex {

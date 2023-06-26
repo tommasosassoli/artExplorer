@@ -111,6 +111,18 @@ function printAnalysis(img) {
   setBboxZIndex()
 }
 
+function reloadAnalysis() {
+  // clear older bbox
+    $('.bboxes .lazo').not('.hide').remove()
+
+    // get image
+    let img = $('.paint img')
+    img = img[0]
+
+    // print analysis
+    printAnalysis(img)
+}
+
 /* description and text */
 
 function splitDescription(analysis) {
@@ -163,7 +175,9 @@ function makeAnalysis(title) {
 
       // remove loading banner
       $('.loading').hide()
-      $('.container').show()
+      $('.container').css('display', 'flex');
+
+      setTimeout(reloadAnalysis, 1500)
     },
     statusCode: {
     404: function() {
@@ -177,22 +191,28 @@ function makeAnalysis(title) {
 
 function bboxHoverInEvent() {
   let keyColor = $(this).attr('data-key-color')
-  bboxHoverEvent(keyColor, '80')
+  opacity = 80
+
+  let span = $('.highlight[data-key-color="' + keyColor + '"]')
+  let color  = '#' + bboxColors[keyColor];
+  $(span).css('backgroundColor', color + opacity)
+
+  let lazo = $('.lazo[data-key-color="' + keyColor + '"]')
+  lazo.css('opacity', opacity / 100)
+  lazo.css('backgroundColor', color + 20)
 }
 
 function bboxHoverOutEvent() {
   let keyColor = $(this).attr('data-key-color')
-  bboxHoverEvent(keyColor, '30')
-}
+  opacity = 30
 
-function bboxHoverEvent(keyColor, opacity) {
-  let span = $('.highlight[data-key-color="' + keyColor + '"]')[0]
+  let span = $('.highlight[data-key-color="' + keyColor + '"]')
   let color  = '#' + bboxColors[keyColor];
-  color += opacity
-  $(span).css('backgroundColor', color)
+  $(span).css('backgroundColor', color + opacity)
 
   let lazo = $('.lazo[data-key-color="' + keyColor + '"]')
   lazo.css('opacity', opacity / 100)
+  lazo.css('backgroundColor', '')
 }
 
 function startAnalysis(title) {
@@ -202,20 +222,6 @@ function startAnalysis(title) {
 
 $(document).ready(function() {
   $(window).on( "resize", function() {
-    // clear older bbox
-    $('.bboxes .lazo').not('.hide').remove()
-
-    // get image
-    let img = $('.paint img')
-    img = img[0]
-
-    // print analysis
-    printAnalysis(img)
+    reloadAnalysis()
   });
-
-  // $(".paint img").on("click", function(event) {
-  //       var x = event.pageX - this.offsetLeft;
-  //       var y = event.pageY - this.offsetTop;
-  //       alert("X Coordinate: " + x + " Y Coordinate: " + y);
-  //   });
 });
