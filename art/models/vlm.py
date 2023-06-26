@@ -100,21 +100,22 @@ class CLIPDistance:
         :return: a list of Association object from bbox and tbox
         """
         images_crop, bboxes = self.cropping()
-        # CLIP encoding
-        images_encoded = self.image_crop_encoding(images_crop)
-        descriptions_encoded = self.description_encoding()
-
-        # distance calculation
         assoc = []
-        for img_index, image_seg in enumerate(images_encoded):
-            dist = (100.0 * image_seg @ descriptions_encoded.T)
-            probs = dist.softmax(dim=-1).cpu().topk(1, dim=-1)
+        if len(images_crop) > 0:
+            # CLIP encoding
+            images_encoded = self.image_crop_encoding(images_crop)
+            descriptions_encoded = self.description_encoding()
 
-            desc_index = probs.indices.numpy()[0][0]  # index of the most probably description
-            bbox = bboxes[img_index]
-            tbox = calc_tbox(self.descriptions, desc_index)
+            # distance calculation
+            for img_index, image_seg in enumerate(images_encoded):
+                dist = (100.0 * image_seg @ descriptions_encoded.T)
+                probs = dist.softmax(dim=-1).cpu().topk(1, dim=-1)
 
-            assoc.append(Association(bbox, tbox, 'CLIPDistance'))
+                desc_index = probs.indices.numpy()[0][0]  # index of the most probably description
+                bbox = bboxes[img_index]
+                tbox = calc_tbox(self.descriptions, desc_index)
+
+                assoc.append(Association(bbox, tbox, 'CLIPDistance'))
         return assoc
 
     def cropping(self) -> tuple[list, list]:
