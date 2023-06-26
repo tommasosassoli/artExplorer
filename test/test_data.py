@@ -41,3 +41,8 @@ class TestDatasetReader(TestCase):
         t = get_artwork_list()
         if t is None or len(t) == 0:
             self.fail()
+
+    def test_search_artwork(self):
+        a = get_artwork_list("Madonna")
+        if len(a) != 129:
+            self.fail()

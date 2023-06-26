@@ -1,6 +1,7 @@
 from flask import Flask, render_template, abort, jsonify
 from art.analysis import Analyzer
 from art.data import lookup_artwork, get_artwork_list
+from db.utils import select, insert
 
 app = Flask(__name__)
 
@@ -21,8 +22,16 @@ def analysis(title):
 def api_analysis(title):
     artwork = lookup_artwork(title)
     if artwork is not None:
-        analyzer = Analyzer(artwork)
-        segments = analyzer.analyze()
+        # check if artwork is in database
+        segments = select(artwork)
+
+        if segments is None:
+            # make analysis and store the result
+            analyzer = Analyzer(artwork)
+            segments = analyzer.analyze()
+            insert(artwork, segments)
+
+        # parsing segments
         seg_parse = parse_segments(segments)
         url = artwork.get_url()
         desc = artwork.get_description()
@@ -33,6 +42,18 @@ def api_analysis(title):
         return jsonify(results)
     else:
         return abort(500)
+
+
+@app.route("/api/search/<title>")
+def api_search(title):
+    artworks = get_artwork_list(title)
+    j = [{'title': a.title,
+          'img_url': a.url,
+          'year': a.year
+          }
+         for a in artworks]
+
+    return jsonify(j)
 
 
 def parse_segments(segments):

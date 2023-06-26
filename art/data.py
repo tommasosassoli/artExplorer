@@ -28,12 +28,16 @@ def lookup_artwork(title) -> Artwork or None:
     return None
 
 
-def get_artwork_list() -> list[Artwork]:
+def get_artwork_list(title=None) -> list[Artwork]:
     if dataframe is None:
         read_dataset(DATASET_PATH)
 
+    df = dataframe
+    if title is not None:
+        df = dataframe.loc[dataframe['title'].str.contains(title, case=False, regex=False)]
+
     list_artwork = []
-    for index, row in dataframe.iterrows():
+    for index, row in df.iterrows():
         title = row['title']
         url = row['img_url']
         year = row['year']
