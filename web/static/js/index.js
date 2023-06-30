@@ -16,6 +16,9 @@ function searchArtworks() {
                         event.preventDefault()
                         window.location = '/' + encodeURI(res.title)
                     })
+                    item.hover(function() {
+                        $(this).find('.detail-ban').slideToggle("show");
+                    });
 
                     $('.container').append(item)
                 });
