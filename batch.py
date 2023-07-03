@@ -1,5 +1,7 @@
 import logging
-logging.basicConfig(filename='log/batch.log', level=logging.INFO)
+logging.basicConfig(filename='log/batch.log',
+                    level=logging.INFO,
+                    format='[%(asctime)s] %(levelname)s:%(processName)s::%(message)s')
 
 from art.analysis import Analyzer
 from art.data import get_artwork_list
@@ -15,7 +17,7 @@ def batch():
         if segments is None:
             try:
                 # make the analysis and insert into db
-                logging.info('Analyzing ' + art.get_title())
+                logging.info('Analyzing ' + art.get_title() + ' (id:' + str(art.get_artpedia_id()) + ')')
                 analyzer = Analyzer(art)
                 segments = analyzer.analyze()
                 insert(art, segments)
