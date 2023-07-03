@@ -45,6 +45,30 @@ header .subtitle {
     width: 90%;
     margin: auto;
     display: flex;
+    align-items: center;
+}
+
+/* arrows */
+
+.arrow-container {
+    width: 5%;
+}
+
+.arrow {
+    width: 100%;
+    cursor: pointer;
+}
+
+.arrow.left {
+    rotate: 180deg;
+}
+
+/* art container */
+
+.art-container {
+    width: 90%;
+    margin: auto;
+    display: flex;
     justify-content: center;
     flex-wrap: wrap;
 }

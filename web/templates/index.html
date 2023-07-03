@@ -24,22 +24,32 @@
   </div>
 
   <div class="container">
-      {% for art in artworks: %}
-    <div class="item" onclick="window.location='{{ url_for("analysis", title=art.get_title()) }}';">
-      <div class="image">
-        <img src="{{ art.get_url() }}" />
+      <div class="arrow-container">
+        <img class="arrow left" src="{{ url_for('static', filename='img/arrow.png') }}" onclick="previousPage();"/>
       </div>
-        <div class="ban">
-          <div class="title-ban">
-              <p>{{ art.get_title() }}</p>
+
+      <div class="art-container">
+          {% for art in artworks: %}
+        <div class="item" onclick="window.location='{{ url_for("analysis", title=art.get_title()) }}';">
+          <div class="image">
+            <img src="{{ art.get_url() }}" />
           </div>
-          <div class="detail-ban">
-<!--            <p class="author">Botticelli</p>-->
-            <p class="year">{{ art.get_year() }}</p>
-          </div>
+            <div class="ban">
+              <div class="title-ban">
+                  <p>{{ art.get_title() }}</p>
+              </div>
+              <div class="detail-ban">
+    <!--            <p class="author">Botticelli</p>-->
+                <p class="year">{{ art.get_year() }}</p>
+              </div>
+            </div>
         </div>
-    </div>
-      {% endfor %}
+          {% endfor %}
+      </div>
+
+      <div class="arrow-container">
+        <img class="arrow right" src="{{ url_for('static', filename='img/arrow.png') }}" onclick="nextPage();"/>
+      </div>
   </div>
 </body>
 

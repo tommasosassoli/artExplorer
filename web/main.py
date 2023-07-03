@@ -1,15 +1,23 @@
 from flask import Flask, render_template, abort, jsonify
+from definitions import CONFIG_PATH
+import configparser
 from art.analysis import Analyzer
 from art.data import lookup_artwork, get_artwork_list
 from db.utils import select, insert
 
+# flask
 app = Flask(__name__)
+
+# config
+config = configparser.ConfigParser()
+config.read(CONFIG_PATH)
 
 
 @app.route("/")
 def index():
+    max_artworks = int(config['web']['max_artwork_homepage'])
     artworks = get_artwork_list()
-    artworks = artworks[0:10]
+    artworks = artworks[0:max_artworks]
     return render_template('index.html', artworks=artworks)
 
 
@@ -54,6 +62,27 @@ def api_search(title):
          for a in artworks]
 
     return jsonify(j)
+
+
+@app.route("/api/page/<page>")
+def api_page(page):
+    page = int(page)
+    max_artworks = int(config['web']['max_artwork_homepage'])
+    start = max_artworks * page
+    end = start + max_artworks
+
+    artworks = get_artwork_list()
+    try:
+        artworks = artworks[start:end]
+
+        j = [{'title': a.title,
+              'img_url': a.url,
+              'year': a.year
+              }
+             for a in artworks]
+        return jsonify(j)
+    except:
+        abort(404)
 
 
 def parse_segments(segments):
