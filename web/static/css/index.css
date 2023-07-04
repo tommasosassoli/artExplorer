@@ -1,0 +1,114 @@
+
+body {
+    color: rgb(40, 40, 40);
+    margin: 0;
+}
+
+/* serach bar */
+
+.search-bar {
+    width: 40%;
+    display: flex;
+    align-items: center;
+    margin: 0.8rem auto;
+}
+
+.search-bar input {
+    width: 100%;
+    height: 30px;
+    text-align: center;
+    font-size: 0.9rem;
+    margin-right: 5px;
+}
+
+/* container */
+
+.container {
+    width: 90%;
+    margin: auto;
+    display: flex;
+    align-items: center;
+}
+
+/* arrows */
+
+.arrow-container {
+    width: 5%;
+}
+
+.arrow {
+    width: 100%;
+    cursor: pointer;
+}
+
+.arrow.left {
+    rotate: 180deg;
+}
+
+/* art container */
+
+.art-container {
+    width: 90%;
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* item */
+
+.item {
+    width: 20rem;
+    height: 15rem;
+    border: solid 1px;
+    margin: 0.5rem 1rem;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.item.to-clone {
+    display: none;
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+}
+
+.image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.ban {
+    width: 100%;
+    min-height: 25%;
+    position: absolute;
+    bottom: 0;
+    background-color: rgba(106, 106, 106, 0.7);
+    text-align: center;
+    color: rgb(230, 230, 230);
+    font-weight: 200;
+}
+
+.title-ban p {
+    font-size: 1.3rem;
+    margin: 0;
+    padding: 1.2rem 0;
+    font-weight: 400;
+}
+
+.detail-ban {
+    display: none;
+}
+
+.detail-ban .author {
+    margin-top: 1rem;
+}
+
+.detail-ban .year {
+    margin-top: 0.2rem;
+}
+

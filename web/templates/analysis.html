@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/analysis.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='js/analysis.js') }}" charset="utf-8"></script>
+
+    <script>
+      const artworkTitle = "{{ title }}";
+      startAnalysis(artworkTitle);
+    </script>
+
+    <title>ArtExplorer</title>
+  </head>
+  <body>
+    <header>
+      <h1 class="title">ArtExplorer</h1>
+      <p class="subtitle">🖼 {{ title }}</p>
+    </header>
+
+    <div class="container">
+      <div class="paint">
+        <div class="bboxes">
+          <div id="lazo" class="lazo hide">
+            <div class="vertex"></div>
+            <div class="vertex"></div>
+            <div class="vertex"></div>
+            <div class="vertex"></div>
+          </div>
+        </div>
+        <img src="" alt="">
+      </div>
+      <div class="chat">
+        <div class="body">
+          <!-- description view -->
+          <div id="art-desc" class="desc hide">
+            <p></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="loading">
+      <div class="idle">
+        <img src="{{ url_for('static', filename='img/robot-icon.png') }}"/>
+        <div class="text">
+            <p>We are loading the artwork that you have requested. Please wait until the process is finished.</p>
+        </div>
+          <div class="typing">
+              <span class="dot"></span>
+              <span class="dot"></span>
+              <span class="dot"></span>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>

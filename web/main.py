@@ -1,51 +1,104 @@
 from flask import Flask, render_template, abort, jsonify
-from art.data import DataFacade
-from art.analyzer import ArtworkAnalyzer
-import os
+from definitions import CONFIG_PATH
+import configparser
+from art.analysis import Analyzer
+from art.data import lookup_artwork, get_artwork_list
+from db.utils import select, insert
 
+# flask
 app = Flask(__name__)
+
+# config
+config = configparser.ConfigParser()
+config.read(CONFIG_PATH)
 
 
 @app.route("/")
-def hello_world():
-    return render_template('index.html')
+def index():
+    max_artworks = int(config['web']['max_artwork_homepage'])
+    artworks = get_artwork_list()
+    artworks = artworks[0:max_artworks]
+    return render_template('index.html', artworks=artworks)
 
 
 @app.route("/<title>")
-def analyze_artwork(title):
-    params = {'title': title}
-    dataset_folder = os.getcwd() + '/dataset/'
-    artwork = DataFacade(dataset_folder).get_artwork(params)
+def analysis(title):
+    return render_template('analysis.html', title=title)
 
+
+@app.route("/api/analysis/<title>")
+def api_analysis(title):
+    artwork = lookup_artwork(title)
     if artwork is not None:
-        analyzer = ArtworkAnalyzer(artwork)
+        # check if artwork is in database
+        segments = select(artwork)
 
-        segments = analyzer.analyze()
+        if segments is None:
+            # make analysis and store the result
+            analyzer = Analyzer(artwork)
+            segments = analyzer.analyze()
+            insert(artwork, segments)
+
+        # parsing segments
         seg_parse = parse_segments(segments)
-        url = artwork.get_artwork_image().get_url()
-        desc = artwork.get_artwork_description().get_description()
+        url = artwork.get_url()
+        desc = artwork.get_description()
 
         results = {'img_url': url,
                    'desc': desc,
                    'segments': seg_parse}
         return jsonify(results)
     else:
-        return abort(404)
+        return abort(500)
+
+
+@app.route("/api/search/<title>")
+def api_search(title):
+    artworks = get_artwork_list(title)
+    j = [{'title': a.title,
+          'img_url': a.url,
+          'year': a.year
+          }
+         for a in artworks]
+
+    return jsonify(j)
+
+
+@app.route("/api/page/<page>")
+def api_page(page):
+    page = int(page)
+    max_artworks = int(config['web']['max_artwork_homepage'])
+    start = max_artworks * page
+    end = start + max_artworks
+
+    artworks = get_artwork_list()
+    try:
+        artworks = artworks[start:end]
+
+        j = [{'title': a.title,
+              'img_url': a.url,
+              'year': a.year
+              }
+             for a in artworks]
+        return jsonify(j)
+    except:
+        abort(404)
 
 
 def parse_segments(segments):
     res = []
     for i in range(len(segments)):
         s = {'bbox': {
-                'startX': segments[i][0][0],
-                'startY': segments[i][0][1],
-                'endX': segments[i][0][2],
-                'endY': segments[i][0][3],
+            'startX': segments[i].bbox[0],
+            'startY': segments[i].bbox[1],
+            'endX': segments[i].bbox[2],
+            'endY': segments[i].bbox[3],
+        },
+            'start_end_pos': {
+                'start': segments[i].tbox[0],
+                'end': segments[i].tbox[1]
             },
-             'start_end_pos': {
-                 'start': segments[i][1][0],
-                 'end': segments[i][1][1]
-             }
+            'process': segments[i].process
         }
         res.append(s)
     return res

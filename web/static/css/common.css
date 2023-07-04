@@ -1,0 +1,21 @@
+
+body {
+    font-family: Segoe UI,Frutiger,Frutiger Linotype,Dejavu Sans,Helvetica Neue,Arial,sans-serif;
+}
+
+/* header */
+
+header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+header .title {
+    font-size: 2.5rem;
+    margin: 1rem;
+}
+
+header .subtitle {
+    font-size: 0.9rem;
+    color: rgb(106, 106, 106);
+}

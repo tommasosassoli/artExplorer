@@ -1,72 +1,70 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/master.css') }}">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
     <script src="https://code.jquery.com/jquery-3.6.4.min.js" integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js" integrity="sha256-lSjKY0/srUM9BE3dPm+c4fBo1dky2v27Gdjm2uoZaL0=" crossorigin="anonymous"></script>
-    <script src="{{ url_for('static', filename='js/chat.js') }}" charset="utf-8"></script>
+    <script src="{{ url_for('static', filename='js/index.js') }}" charset="utf-8"></script>
 
-    <title>Museum Chat</title>
-  </head>
-  <body>
-    <div class="container">
-      <div class="paint">
-        <div class="bboxes">
-          <div id="lazo" class="lazo hide">
-            <div class="vertex"></div>
-            <div class="vertex"></div>
-            <div class="vertex"></div>
-            <div class="vertex"></div>
-          </div>
-        </div>
-        <img src="{{ url_for('static', filename='img/Botticelli-primavera.jpg') }}" alt="">
+    <title>ArtExplorer</title>
+</head>
+<body>
+  <header>
+    <h1 class="title">ArtExplorer</h1>
+    <p class="subtitle">Select an artwork that you want to explore 🌎!</p>
+  </header>
+
+  <div class="search-bar">
+      <input id="search-input" type="text" placeholder="Type the title of an artwork...">
+      <button id="search-btn" onclick="searchArtworks();">
+          <svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 30 30" width="30px" height="30px">
+              <path d="M 13 3 C 7.4889971 3 3 7.4889971 3 13 C 3 18.511003 7.4889971 23 13 23 C 15.396508 23 17.597385 22.148986 19.322266 20.736328 L 25.292969 26.707031 A 1.0001 1.0001 0 1 0 26.707031 25.292969 L 20.736328 19.322266 C 22.148986 17.597385 23 15.396508 23 13 C 23 7.4889971 18.511003 3 13 3 z M 13 5 C 17.430123 5 21 8.5698774 21 13 C 21 17.430123 17.430123 21 13 21 C 8.5698774 21 5 17.430123 5 13 C 5 8.5698774 8.5698774 5 13 5 z"/>
+          </svg>
+      </button>
+  </div>
+
+  <div class="container">
+      <div class="arrow-container">
+        <img class="arrow left" src="{{ url_for('static', filename='img/arrow.png') }}" onclick="previousPage();"/>
       </div>
-      <div class="chat">
-        <div class="body">
-          <!-- display idle view -->
-          <div id="idle-popup" class="idle">
-            <div class="icon">
-              <img src="{{ url_for('static', filename='img/robot-icon.png') }}" alt="">
-            </div>
-            <div class="text">
-              <p>Welcome! Write the title of an artwork that you want to explore 🌎!</p>
-            </div>
-            <div class="loading hide">
-              <div class="typing">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
+
+      <div class="art-container">
+          {% for art in artworks: %}
+        <div class="item" onclick="window.location='{{ url_for("analysis", title=art.get_title()) }}';">
+          <div class="image">
+            <img src="{{ art.get_url() }}" />
+          </div>
+            <div class="ban">
+              <div class="title-ban">
+                  <p>{{ art.get_title() }}</p>
+              </div>
+              <div class="detail-ban">
+    <!--            <p class="author">Botticelli</p>-->
+                <p class="year">{{ art.get_year() }}</p>
               </div>
             </div>
-          </div>
-
-          <!-- not found view -->
-          <div id="notfound-popup" class="idle hide">
-            <div class="icon">
-              <img src="{{ url_for('static', filename='img/robot-icon.png') }}" alt="">
-            </div>
-            <div class="text">
-              <p>Sorry, I didn't find anything..☹️ Try again.</p>
-            </div>
-          </div>
-
-          <!-- description view -->
-          <div id="art-desc" class="desc hide">
-            <p>
-            Tuttavia, perché voi intendiate da dove sia nato tutto questo errore, di quelli che incolpano il piacere ed esaltano il dolore, io spiegherò tutta la questione, e presenterò le idee espresse dal famoso esploratore della verità, vorrei quasi dire dal costruttore della felicità umana. Nessuno, infatti, detesta, odia, o rifugge il piacere in quanto tale, solo perché è piacere, ma perché grandi sofferenze colpiscono quelli che non sono capaci di raggiungere il piacere attraverso la ragione; e al contrario, non c'è nessuno che ami, insegua, voglia raggiungere il dolore in sé stesso, soltanto perché è dolore, ma perché qualche volta accadono situazioni tali per cui attraverso la sofferenza o il dolore si cerca di raggiungere un qualche grande piacere. Concentrandoci su casi di piccola importanza: chi di noi intraprende un esercizio ginnico, se non per ottenerne un qualche vantaggio? E d'altra parte, chi avrebbe motivo di criticare colui che desidera provare un piacere cui non segua nessun fastidio, o colui che fugge un dolore che non produce nessun piacere?
-Al contrario, però, noi con indignazione denunciamo e riteniamo meritevoli di odio quelli che, rammolliti e corrotti dai piaceri del momento, accecati dal desiderio, non prevedono a quali dolori e a quali sofferenze andranno incontro, e uguale colpa hanno quelli che abbandonano i propri doveri per pigrizia d'animo, cioè per evitare le fatiche e i dolori. Certamente è facile e rapido distinguere questi casi. Infatti nel tempo libero, quando abbiamo tutta la nostra possibilità di scegliere e niente ci ostacola dal fare ciò che ci piace di più, bisogna accogliere ogni piacere e respingere ogni dolore. Ma in altri momenti, o nei doveri inevitabili o negli obblighi che ci vengono dalle circostanze, spesso accadrà che si debba respingere il piacere e accogliere il fastidio. E così il saggio si regola scegliendo tra questi atteggiamenti, facendo in modo che o – respingendo il piacere – ne ottenga di più grandi, o – sopportando il dolore – ne eviti di peggiori.
-            </p>
-          </div>
-
         </div>
-        <div class="input">
-          <textarea name="name" id="inputtext" rows="1" placeholder="Type the name of a picture..."></textarea>
-          <div class="send-btn" id="sendbtn">
-            <img src="{{ url_for('static', filename='img/send-icon.png') }}" alt="Send">
-          </div>
-        </div>
+          {% endfor %}
       </div>
+
+      <div class="arrow-container">
+        <img class="arrow right" src="{{ url_for('static', filename='img/arrow.png') }}" onclick="nextPage();"/>
+      </div>
+  </div>
+</body>
+
+<div class="item to-clone">
+      <div class="image">
+        <img src="" />
+      </div>
+        <div class="ban">
+          <div class="title-ban">
+              <p></p>
+          </div>
+          <div class="detail-ban">
+            <p class="year"></p>
+          </div>
+        </div>
     </div>
-  </body>
 </html>

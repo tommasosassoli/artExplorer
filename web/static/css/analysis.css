@@ -1,0 +1,191 @@
+
+.container {
+  width: 100%;
+  max-height: 95vh;
+  /*display: flex;*/
+  display: none;  /* while loading artwork */
+  flex-direction: row;
+  margin: auto;
+}
+
+.hide {
+  display: none;
+}
+
+/* PAINT */
+
+.paint {
+  width: 60%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paint img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 1;
+}
+
+/* lazo */
+
+.bboxes {
+  position: absolute;
+  z-index: 2;
+}
+
+.lazo {
+  width: 10%;
+  height: 10%;
+  position: absolute;
+  border: 2px solid rgb(57, 192, 237);
+  cursor: pointer;
+}
+
+.lazo.hide {
+  display: none;
+}
+
+.lazo .vertex {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  position: absolute;
+  background: rgb(255, 255, 255);
+  border: 1px solid rgb(222, 226, 230);
+}
+
+.lazo .vertex:nth-child(1) {
+  top: -0.5em;
+  left: -0.5em;
+}
+
+.lazo .vertex:nth-child(2) {
+  top: -0.5em;
+  right: -0.5em;
+}
+
+.lazo .vertex:nth-child(3) {
+  bottom: -0.5em;
+  right: -0.5em;
+}
+
+.lazo .vertex:nth-child(4) {
+  bottom: -0.5em;
+  left: -0.5em;
+}
+
+/* CHAT */
+
+.chat {
+  width: 40%;
+  border: 1px solid rgb(198, 201, 204);
+  border-radius: 0 0.75rem 0.75rem 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* body */
+
+.chat .body {
+  margin: auto;
+  padding: 0.75rem;
+  overflow-y: auto;
+}
+
+/* desc */
+
+.chat .desc {
+  margin: 0 1.75rem;
+  line-height: 1.5rem;
+}
+
+.highlight {
+  margin-right: 0.4rem;
+}
+
+/* loading banner */
+
+.loading {
+    background-color: rgba(128, 128, 128, 0.30);
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    top: 0;
+}
+
+.loading .idle {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 6rem;
+  padding: 1rem 0;
+  background-color: rgba(251, 251, 251);
+  border: 1px solid rgb(222, 226, 230);
+  border-radius: 0.75rem;
+}
+
+.loading .idle img {
+  width: 2.8rem;
+  height: 2.8rem;
+}
+
+.loading .idle .text {
+  padding: 1rem;
+  margin: 0 1rem;
+}
+
+.loading .idle .text p {
+  margin: 0;
+  text-align: center;
+}
+
+/* typing animation */
+
+.typing {
+  align-items: center;
+  display: flex;
+  height: 17px;
+}
+.typing .dot {
+  animation: typingAnimation 1.8s infinite ease-in-out;
+  background-color: rgba(57, 192, 237,.7);
+  border-radius: 50%;
+  height: 5px;
+  margin-right: 4px;
+  vertical-align: middle;
+  width: 5px;
+  display: inline-block;
+}
+.typing .dot:nth-child(1) {
+  animation-delay: 200ms;
+}
+.typing .dot:nth-child(2) {
+  animation-delay: 300ms;
+}
+.typing .dot:nth-child(3) {
+  animation-delay: 400ms;
+}
+.typing .dot:last-child {
+  margin-right: 0;
+}
+
+@keyframes typingAnimation {
+  0% {
+    transform: translateY(0px);
+    background-color:rgba(57, 192, 237,.7);
+  }
+  28% {
+    transform: translateY(-7px);
+    background-color: rgba(57, 192, 237,.4);
+  }
+  44% {
+    transform: translateY(0px);
+    background-color: rgba(57, 192, 237,.2);
+  }
+}
+
