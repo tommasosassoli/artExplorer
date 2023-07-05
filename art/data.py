@@ -5,7 +5,13 @@ from PIL import Image
 import requests
 from io import BytesIO
 import openai
-import os
+from definitions import CONFIG_PATH
+import configparser
+
+
+# config
+config = configparser.ConfigParser()
+config.read(CONFIG_PATH)
 
 
 def read_dataset(path):
@@ -88,7 +94,7 @@ class GPTApi:
         """
         :return: the response from the api
         """
-        openai.api_key = os.getenv('OPENAI_API_KEY')
+        openai.api_key = config['openai']['api_key']
         completion = openai.ChatCompletion.create(
             model="gpt-3.5-turbo",
             messages=[
