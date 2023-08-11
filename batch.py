@@ -3,6 +3,7 @@ logging.basicConfig(filename='log/batch.log',
                     level=logging.INFO,
                     format='[%(asctime)s] %(levelname)s:%(processName)s::%(message)s')
 
+import gc
 from art.analysis import Analyzer
 from art.data import get_artwork_list
 from db.utils import select, insert
@@ -23,6 +24,9 @@ def batch():
                 insert(art, segments)
             except Exception as exc:
                 logging.error('Exception: ' + str(exc))
+            finally:
+                del analyzer
+                gc.collect()
     logging.info('End batch process')
 
 
